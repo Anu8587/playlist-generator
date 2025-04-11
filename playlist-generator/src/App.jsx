@@ -23,8 +23,12 @@ const App = () => {
 
     try {
       const response = await axios.post("http://localhost:3000/api/generate", {
-        prompt,
+        situation: weather,
+        mood,
+        language,
+        userPrompt: customPrompt
       });
+      
 
       const message = response.data?.content[0]?.text || "";
       const songs = message.split("\n").filter((song) => song.trim() !== "");

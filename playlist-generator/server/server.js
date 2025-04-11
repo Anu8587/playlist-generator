@@ -10,8 +10,14 @@ app.use(cors());
 const HF_TOKEN = process.env.HF_TOKEN;
 
 app.post("/api/generate", async (req, res) => {
-  const { prompt } = req.body;
-  console.log("Received Prompt:", prompt);
+  const { situation, mood, language, userPrompt } = req.body;
+
+const prompt = userPrompt?.trim()
+  ? userPrompt
+  : `Generate 5 ${language || "English"} songs suitable for a ${mood || "chill"} mood during a ${situation || "pleasant"} weather. Return each song name in a new line without extra text.`;
+
+console.log("Final Prompt Sent to HF:", prompt);
+
 
   try {
     const hfPrompt = `Generate 5 real and popular song names for a playlist based on this theme: "${prompt}". Return each song name in a new line without extra text.`;

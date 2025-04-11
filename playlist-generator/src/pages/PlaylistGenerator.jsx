@@ -17,19 +17,23 @@ const PlaylistGenerator = () => {
     setError("");
     try {
       const response = await axios.post(
-        "https://api.cohere.ai/v1/generate",
+        "https://playlist-generator-1.onrender.com/generate",
         {
-          model: "command",
-          prompt: `Generate a playlist based on: situation=${situation}, mood=${mood}, language=${language}, user prompt=${userPrompt}. Return a JSON list of objects with {title: string, artist: string}.`,
-          max_tokens: 300,
-        },
-        {
-          headers: { Authorization: `Bearer EjMfKCcTDL55sMKwOn6FvjredPSJKubSKJehCv1i` }, // Replace with your Cohere API key
+          situation,
+          mood,
+          language,
+          userPrompt,
         }
       );
-      const text = response.data.generations[0].text;
-      const parsedPlaylist = JSON.parse(text.replace(/```json|```/g, ""));
-      setPlaylist(parsedPlaylist);
+  
+      const data = response.data;
+  
+      if (Array.isArray(data)) {
+        setPlaylist(data);
+      } else {
+        setError("Unexpected response format");
+        setPlaylist([{ title: "Oops!", artist: "Invalid format" }]);
+      }
     } catch (err) {
       console.error("Error generating playlist:", err);
       setError("Failed to generate playlist. Please try again.");
@@ -37,6 +41,7 @@ const PlaylistGenerator = () => {
     }
     setLoading(false);
   };
+  
 
   useEffect(() => {
     if (situation || mood || userPrompt) generatePlaylist();
